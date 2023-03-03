@@ -8,6 +8,7 @@ const path = require('path')
 const morgan = require('morgan')
 
 const app = express()
+require('./passport/local-auth')
 //app.set()
 app.set('views', path.join(__dirname, 'views'))
 app.engine('ejs', engine)
@@ -24,8 +25,8 @@ app.use(cookieParser('nach1n'))
 app.use(session({
     // key: 'user_sid',
     secret: 'nach1n',
-    resave: true,
-    saveUninitialized: true
+    resave: false,
+    saveUninitialized: false
 }))
 app.use(passport.initialize())
 app.use(passport.session())
