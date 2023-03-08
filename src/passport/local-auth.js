@@ -1,5 +1,5 @@
 const passport = require('passport')
-const passportLocal = require('passport-local').Strategy
+const LocalStrategy = require('passport-local').Strategy
 const User = require('../models/user')
 
 
@@ -11,7 +11,7 @@ passport.deserializeUser(async(id, done)=>{
     const user = await User.findById(id)
     done(null, user)
 })
-passport.use('local-signup', new passportLocal ({
+passport.use('local-signup', new LocalStrategy ({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallBack: true
@@ -19,19 +19,21 @@ passport.use('local-signup', new passportLocal ({
 },async(req, email, password, done)=>{
 
     const user = User.findOne({email: email})
+    console.log(user)
     if(user){
         return done(null, false, req.flash('signupMessage', 'The email is already used'))
     }else{
         const newUser = new User()
         newUser.email = email
         newUser.password = newUser.encryptPassword(password)
+        console.log(newUser)
         await newUser.save()
         done(null, newUser)
     }
    
 }))
 
-passport.use('local-signin', new passportLocal({
+passport.use('local-signin', new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallBack: true
